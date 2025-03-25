@@ -73,7 +73,7 @@ Widget AdsItemCard(ad, img, images) {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 child: CachedNetworkImage(
                   imageUrl: img != null
-                      ? '$API_URL/img_mini/$img'
+                      ? '${IMG_URL['ads_img_preview']}$img'
                       : 'https://via.placeholder.com/120',
                   width: double.infinity,
                   height: 152,

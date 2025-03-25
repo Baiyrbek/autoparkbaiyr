@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -19,8 +20,12 @@ class AdDetailRepository {
 
   Future<Map<String, dynamic>> getAdDetails(String adId) async {
     try {
+      //print('Fetching ad details for ID: $adId');
       final dynamic adDetails = await getAdDetailsFromNetwork(adId);
+      //print('Received ad details: $adDetails');
+
       if (adDetails == null || adDetails.isEmpty) {
+        //print('Ad details are empty or null');
         return {
           'title': 'Unknown',
           'price': '0',
@@ -36,20 +41,27 @@ class AdDetailRepository {
       final priceCurIndex = adDetails['price_cur'] is String
           ? int.tryParse(adDetails['price_cur']) ?? 0
           : (adDetails['price_cur'] as int?) ?? 0;
+      //print('Price currency index: $priceCurIndex');
 
       // Handle images
       List<String> images = [];
-      final imgValue = json.decode(adDetails['img']);
-      if (imgValue != null) {
-        if (imgValue is List) {
+      try {
+        final imgValue = json.decode(adDetails['img']);
+        print('Raw image value: $imgValue');
+
+        if (imgValue != null) {
           images = List<String>.from(imgValue)
               .where((img) => img != null && img.toString().isNotEmpty)
-              .map((img) => '$API_URL/img/$img')
+              .map((img) => '${IMG_URL['ads_img']}$img')
               .toList();
+          print('Processed images: $images');
         }
+      } catch (e) {
+        print('Error processing images: $e');
+        images = [];
       }
-      print(images);
-      return {
+
+      final result = {
         'title':
             '${adDetails['brand'] ?? ''} ${adDetails['model'] ?? ''} ${adDetails['year'] ?? ''}',
         'price':
@@ -67,43 +79,42 @@ class AdDetailRepository {
                 'https://example.com/image3.jpg',
               ],
       };
-    } catch (e) {
-      print('Error in getAdDetails: $e');
+      //print('Final processed result: $result');
+      return result;
+    } catch (e, stackTrace) {
+      //print('Error in getAdDetails: $e');
+      //print('Stack trace: $stackTrace');
       rethrow;
     }
   }
 
-  Future<Map<String, dynamic>> getAdDetailsFromNetwork(String id) async {
-    // Check for network connectivity
-    final connectivityResult = await Connectivity().checkConnectivity();
-    Map<String, dynamic> adDetails = {};
+  Future<Map<String, dynamic>> getAdDetailsFromNetwork(String adId) async {
+    try {
+      //print('Making API request to: $API_URL/get/ads.php?q=getAd&id=$adId');
+      final response = await http.get(
+        Uri.parse('$API_URL/get/ads.php?q=getAd&id=$adId'),
+      );
+      //print('Response status code: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
-    if (connectivityResult != ConnectivityResult.none) {
-      try {
-        final response =
-            await http.get(Uri.parse('$API_URL/get/ads.php?q=getAd&id=$id'));
-        print('Response status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          final dynamic data = json.decode(response.body);
-          if (data is List && data.isNotEmpty) {
-            adDetails = Map<String, dynamic>.from(data[0]);
-          } else if (data is Map) {
-            adDetails = Map<String, dynamic>.from(data);
-          }
-          print('Parsed ad details: $adDetails');
-        } else {
-          throw Exception('Failed to load ad details: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data != null) {
+          return data;
         }
-      } catch (e) {
-        print('Error fetching ad details: $e');
-        rethrow;
       }
-    } else {
-      throw Exception('No internet connection');
+      throw Exception('Failed to load ad details');
+    } on SocketException catch (e) {
+      //print('SocketException: $e');
+      throw Exception(
+          'No internet connection. Please check your network and try again.');
+    } on HttpException catch (e) {
+      //print('HttpException: $e');
+      throw Exception('Could not reach the server. Please try again later.');
+    } catch (e) {
+      //print('General error: $e');
+      throw Exception('An error occurred. Please try again.');
     }
-    return adDetails;
   }
 
   Future<void> toggleFavorite(String adId, bool isFavorite) async {

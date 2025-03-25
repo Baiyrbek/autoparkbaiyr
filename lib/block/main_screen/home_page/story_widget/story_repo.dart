@@ -20,7 +20,6 @@ class StoryRepository {
         if (response.statusCode == 200) {
           // Parse the JSON response to extract image URLs
           final List<dynamic> imagesJson = jsonDecode(response.body);
-          print(imagesJson);
           imageUrls = imagesJson.map((story) => story['img'] as String).toList();
 
           // Save the images in SharedPreferences

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../block/ad_detail_screen/ad_detail_bloc.dart';
 import '../block/ad_detail_screen/ad_detail_event.dart';
 import '../block/ad_detail_screen/ad_detail_repository.dart';
 import '../block/ad_detail_screen/ad_detail_state.dart';
 import '../utils/custom_top_bar.dart';
+import '../constants/api_key.dart';
+import 'ad_detail_screen/full_screen_image_view.dart';
 
 class AdDetailScreen extends StatelessWidget {
   final String adId;
@@ -48,29 +50,8 @@ class _AdDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text('Auto Park'),
-        actions: [
-          BlocBuilder<AdDetailBloc, AdDetailState>(
-            builder: (context, state) {
-              return IconButton(
-                icon: Icon(
-                  state.isInFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: state.isInFavorite ? Colors.red : null,
-                ),
-                onPressed: () {
-                  context.read<AdDetailBloc>().add(ToggleFavoriteEvent());
-                },
-              );
-            },
-          ),
-        ],
-      ),
+      backgroundColor: Colors.white,
+      
       body: BlocBuilder<AdDetailBloc, AdDetailState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -113,6 +94,17 @@ class _AdDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                CustomTopBar(title: 'Auto Park'),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    state.adInfo!['title'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: (MediaQuery.of(context).size.width * 270) / 300,
@@ -128,12 +120,16 @@ class _AdDetailView extends StatelessWidget {
                                   imageUrl: url,
                                   fit: BoxFit.cover,
                                   width: MediaQuery.of(context).size.width,
-                                  placeholder: (context, url) => Shimmer.fromColors(
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
                                     baseColor: Colors.grey[300]!,
                                     highlightColor: Colors.grey[100]!,
                                     child: Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: (MediaQuery.of(context).size.width * 270) / 300,
+                                      height:
+                                          (MediaQuery.of(context).size.width *
+                                                  270) /
+                                              300,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -159,11 +155,6 @@ class _AdDetailView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        state.adInfo!['title'],
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      const SizedBox(height: 8),
                       Text(
                         '${state.adInfo!['price']}',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -245,49 +236,6 @@ class _AdDetailView extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class FullScreenImageView extends StatelessWidget {
-  final String imageUrl;
-
-  const FullScreenImageView({
-    Key? key,
-    required this.imageUrl,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.close_fullscreen),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: InteractiveViewer(
-        minScale: 0.5,
-        maxScale: 4.0,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: CachedNetworkImage(
-            imageUrl: imageUrl,
-            fit: BoxFit.contain,
-            placeholder: (context, url) => const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-            errorWidget: (context, url, error) => const Icon(
-              Icons.error,
-              color: Colors.white,
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -45,7 +45,7 @@ class AdDetailBloc extends Bloc<AdDetailEvent, AdDetailState> {
       emit(state.copyWith(
         isLoading: false,
         hasError: true,
-        errorMessage: 'Failed to load ad details: ${e.toString()}',
+        errorMessage: 'Failed to load ad ${e.toString()}',
       ));
     }
   }

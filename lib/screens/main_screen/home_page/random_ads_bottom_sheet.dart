@@ -79,9 +79,9 @@ class RandomAdsBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double flippedPaddingTop = MediaQuery.of(context).padding.flipped.top;
+    double flippedPaddingTop = MediaQuery.of(context).viewPadding.top + MediaQuery.of(context).viewPadding.bottom + 388;
     double sheetMinChilSize =
-        (screenHeight - flippedPaddingTop - 338) / screenHeight;
+        (screenHeight - flippedPaddingTop) / screenHeight;
     return BlocBuilder<RandomAdsBloc, RandomAdsState>(
       builder: (context, state) {
         return DraggableScrollableSheet(
