@@ -6,8 +6,17 @@ import '../../block/publish_screen/publish_event.dart';
 import '../../block/publish_screen/publish_state.dart';
 import 'dart:io';
 
-class PhotoScreen extends StatelessWidget {
-  const PhotoScreen({Key? key}) : super(key: key);
+class PhotoScreen extends StatefulWidget {
+  @override
+  State<PhotoScreen> createState() => _PhotoScreenState();
+}
+
+class _PhotoScreenState extends State<PhotoScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<PublishBloc>().add(GetBrandsEvent());
+  }
 
   @override
   Widget build(BuildContext context) {

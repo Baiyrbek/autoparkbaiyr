@@ -66,7 +66,7 @@ class PublishPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PublishScreen(type: '0'),
+                        builder: (context) => PublishScreen(),
                       ),
                     );
                   },

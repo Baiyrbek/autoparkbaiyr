@@ -7,6 +7,12 @@ abstract class PublishEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class GetBrandsEvent extends PublishEvent {}
+
+class GetAllModelsEvent extends PublishEvent {}
+
+class UpdateModelsEvent extends PublishEvent {}
+
 class NextPageEvent extends PublishEvent {}
 
 class PreviousPageEvent extends PublishEvent {}
@@ -76,4 +82,6 @@ class UpdateDescriptionEvent extends PublishEvent {
 
 class SubmitPublishEvent extends PublishEvent {}
 
-class ClearErrorEvent extends PublishEvent {} 
+class ClearErrorEvent extends PublishEvent {}
+
+class NavigateToMainScreenEvent extends PublishEvent {} 

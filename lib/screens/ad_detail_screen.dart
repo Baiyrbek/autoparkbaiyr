@@ -51,7 +51,6 @@ class _AdDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      
       body: BlocBuilder<AdDetailBloc, AdDetailState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -155,27 +154,63 @@ class _AdDetailView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${state.adInfo!['price']}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${state.adInfo!['price']}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Theme.of(context).primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(state.adInfo!['location']),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(state.adInfo!['date']),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[100],
                             ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, size: 16),
-                          const SizedBox(width: 4),
-                          Text(state.adInfo!['location']),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today, size: 16),
-                          const SizedBox(width: 4),
-                          Text(state.adInfo!['date']),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.bookmark,
+                                size: 42,
+                              ),
+                              color: state.isInFavorite
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey,
+                              onPressed: () {
+                                context.read<AdDetailBloc>().add(
+                                      ToggleFavoriteEvent(),
+                                    );
+                              },
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),

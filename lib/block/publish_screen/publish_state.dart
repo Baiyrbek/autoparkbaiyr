@@ -14,9 +14,12 @@ class PublishState extends Equatable {
   final bool isLoading;
   final String? error;
   final String selectedCity;
-  final List<String> brands;
+  final List<Map<String, dynamic>> brands;
+  final List<Map<String, dynamic>> allModels;
   final List<String> models;
   final List<String> years;
+  final bool showSuccessModal;
+  final bool showErrorModal;
 
   PublishState({
     this.currentPage = 0,
@@ -30,10 +33,14 @@ class PublishState extends Equatable {
     this.isLoading = false,
     this.error,
     this.selectedCity = '',
-    List<String>? brands,
+    List<Map<String, dynamic>>? brands,
+    List<Map<String, dynamic>>? allModels,
     List<String>? models,
     List<String>? years,
-  }) : brands = brands ?? ['Brand 1', 'Brand 2', 'Brand 3'],
+    this.showSuccessModal = false,
+    this.showErrorModal = false,
+  }) : brands = brands ?? [{'name': 'Brand 1'}, {'name': 'Brand 2'}, {'name': 'Brand 3'}],
+       allModels = allModels ?? [],
        models = models ?? ['Model 1', 'Model 2', 'Model 3'],
        years = years ?? List.generate(
          DateTime.now().year - 1969,
@@ -52,15 +59,18 @@ class PublishState extends Equatable {
     bool? isLoading,
     String? error,
     String? selectedCity,
-    List<String>? brands,
+    List<Map<String, dynamic>>? brands,
+    List<Map<String, dynamic>>? allModels,
     List<String>? models,
     List<String>? years,
+    bool? showSuccessModal,
+    bool? showErrorModal,
   }) {
     return PublishState(
       currentPage: currentPage ?? this.currentPage,
       selectedImages: selectedImages ?? this.selectedImages,
       selectedBrand: selectedBrand ?? this.selectedBrand,
-      selectedModel: selectedModel ?? this.selectedModel,
+      selectedModel: selectedBrand != null ? null : selectedModel ?? this.selectedModel,
       selectedYear: selectedYear ?? this.selectedYear,
       selectedRegion: selectedRegion ?? this.selectedRegion,
       price: price ?? this.price,
@@ -69,8 +79,11 @@ class PublishState extends Equatable {
       error: error,
       selectedCity: selectedCity ?? this.selectedCity,
       brands: brands ?? this.brands,
+      allModels: allModels ?? this.allModels,
       models: models ?? this.models,
       years: years ?? this.years,
+      showSuccessModal: showSuccessModal ?? this.showSuccessModal,
+      showErrorModal: showErrorModal ?? this.showErrorModal,
     );
   }
 
@@ -88,14 +101,17 @@ class PublishState extends Equatable {
         error,
         selectedCity,
         brands,
+        allModels,
         models,
         years,
+        showSuccessModal,
+        showErrorModal,
       ];
 
   static Future<PublishState> initial() async {
     final prefs = await SharedPreferences.getInstance();
-    final brands = prefs.getStringList('brands') ?? ['Brand 1', 'Brand 2', 'Brand 3'];
-    print(brands);
+    final brandNames = prefs.getStringList('brands') ?? ['Brand 1', 'Brand 2', 'Brand 3'];
+    final brands = brandNames.map((name) => {'name': name}).toList();
     return PublishState(
       brands: brands,
     );

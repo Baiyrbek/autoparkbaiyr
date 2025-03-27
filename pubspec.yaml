@@ -26,9 +26,13 @@ dependencies:
   cached_network_image: ^3.3.1
   shimmer: ^3.0.0
   flutter_carousel_widget: ^2.2.0
-  amplify_flutter: ^2.6.1
-  amplify_storage_s3: ^2.6.1
+  aws_common: ^0.6.0
+  amplify_flutter: ^1.6.0
+  amplify_storage_s3: ^1.6.0
+  amplify_auth_cognito: ^1.6.0
+  amplify_secure_storage: ^0.4.0
   image_picker: ^1.1.2
+  image: ^4.5.4
 
 
 dev_dependencies:

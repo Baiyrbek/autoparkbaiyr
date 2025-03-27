@@ -21,6 +21,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     super.initState();
     _priceController = TextEditingController();
     _descriptionController = TextEditingController();
+    context.read<PublishBloc>().add(GetAllModelsEvent());
   }
 
   @override
@@ -84,7 +85,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 onChanged: (value) {
                   context.read<PublishBloc>().add(UpdateBrandEvent(value));
                 },
-                items: state.brands,
+                items: state.brands.map((brand) => brand['name'] as String).toList(),
               ),
               SizedBox(height: 16),
               _buildTextField(

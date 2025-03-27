@@ -168,16 +168,15 @@ class RandomAdsBottomSheet extends StatelessWidget {
                             mainAxisSpacing: 8,
                             crossAxisSpacing: 8,
                             children: state.ads.map((ad) {
-                              final List<String> images = (jsonDecode(ad['img']) as List)
-                                  .where((element) => element != null && element.toString().isNotEmpty)
-                                  .map((e) => e.toString())
-                                  .toList();
-                              final img =
-                                  (ad['img'] != null && ad['img'].isNotEmpty)
-                                      ? images[0]
-                                      : null;
-
-                              return AdsItemCard(ad, img, images);
+                                final List<String> images = (jsonDecode(ad['img']) as List)
+                                    .where((element) => element != null && element.toString().isNotEmpty)
+                                    .map((e) => e.toString())
+                                    .toList();
+                                final img =
+                                    (ad['img'] != null && ad['img'].isNotEmpty)
+                                        ? images[0]
+                                        : null;
+                                return AdsItemCard(ad, img, images);
                             }).toList(),
                           ),
                         ),
